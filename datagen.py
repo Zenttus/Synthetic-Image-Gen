@@ -1,7 +1,7 @@
 import bpy
 import os
 
-pathToBackgroundImages = os.path.join('C:\\', 'Users', 'Owrn', 'Desktop', 'backgroundImages')
+pathToBackgroundImages = os.path.join('C:\\', 'Users', 'Owrn', 'Documents', 'gitRepos', 'synthetic-data-gen', 'backgroundImages')
 cameraConstant = 2.1892349261 #Based on the camera angle(if field of view changes this must also change).
 
 #Clean up scene
