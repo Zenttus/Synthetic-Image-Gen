@@ -10,7 +10,7 @@ def posObjRnd(object, zrange, relativeSize, imageX):
     yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
     xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
     print(zPos)
-    print(yPos)
+    print(yPos)j
     print(xPos)
 
     if(object==None):
@@ -95,6 +95,9 @@ def generateLabelFile(object, camera, img, n):
     xmax.text = ""
     ymax = etree.SubElement(bndBox, "ymax")
     ymax.text = ""
+    file = open(os.path.join('C:\\', 'Users', 'Owrn', 'Documents', 'gitRepos', 'synthetic-data-gen-hub', 'backgroundImages', 'test.xml'), 'w')
+    file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n","")[2:])
+    file.close()
 
 def updateLamp(lamp, scene, img):
     if(lamp==None):
