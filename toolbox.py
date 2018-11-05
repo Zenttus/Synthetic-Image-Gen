@@ -1,11 +1,16 @@
 import bpy
+from bpy_extras.object_utils import world_to_camera_view
 import os
 import random
 from lxml import etree
 
 # TODO: Documentation
+# TODO: Oganize order
+# TODO: Make parameters name better
+# TODO: Different label modes for different outputs
+# TODO: verify resolution
 
-# TODO: Incorporate scale and origin
+# TODO: Incorporate scale and origin, different types of file, random rotation
 def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath):
     '''Descrip
     Parameters
@@ -70,6 +75,7 @@ def changeImage(camera, newImgName, oldImg, pathToBackgroundImages):
     camera.location = (0,0,abs(imgPos)*cameraConstant)
     return imgPos, newImg
 
+# TODO: make it more random(color intensity)
 def updateLamp(lamp, scene, img):
     #Create lamp if it doesnt exist.
     if(lamp==None):
@@ -85,14 +91,20 @@ def updateLamp(lamp, scene, img):
     scene.objects.active = lamp
     return lamp
 
-def generateLabelFile(object, camera, pathToResults, img, resX, resY, label):
+# TODO: multiple objects
+def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, label):
     root = etree.Element("annotation")
+
     folder = etree.SubElement(root, "folder")
     folder.text = "results"
     fileName = etree.SubElement(root, "filename")
     fileName.text = str(img)
     path = etree.SubElement(root, "path")
     path.text = pathToResults
+    source = etree.SubElement(root, "source")
+    database = etree.SubElement(source, "database")
+    database.text = "Unknown"
+
     size = etree.SubElement(root, "size")
     width = etree.SubElement(size, "width")
     width.text = str(resX)
@@ -102,6 +114,8 @@ def generateLabelFile(object, camera, pathToResults, img, resX, resY, label):
     depth.text = "3"
     segmented = etree.SubElement(root, "segmented")
     segmented.text = "0"
+
+    xmaxV, xminV, yminV, ymaxV = getObjCords(scene, object, camera)
 
     obj = etree.SubElement(root, "object")
     label = etree.SubElement(obj, "name")
@@ -114,15 +128,40 @@ def generateLabelFile(object, camera, pathToResults, img, resX, resY, label):
     difficult.text = "0"
     bndBox = etree.SubElement(obj, "bndbox")
     xmin = etree.SubElement(bndBox, "xmin")
-    xmin.text = ""
+    xmin.text = str(xminV)
     ymin = etree.SubElement(bndBox, "ymin")
-    ymin.text = ""
+    ymin.text = str(yminV)
     xmax = etree.SubElement(bndBox, "xmax")
-    xmax.text = ""
+    xmax.text = str(xmaxV)
     ymax = etree.SubElement(bndBox, "ymax")
-    ymax.text = ""
-    file = open(pathToResults + '\\' + img[:-3] + 'xml', 'w')
+    ymax.text = str(ymaxV)
+    file = open(pathToResults + '\\' + img + '.xml', 'w')
     file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n","")[2:])
     file.close()
 
-# TODO: make it more random(color intensity)
+# TODO: Research of something to be done with the distance parameter?
+def getObjCords(scene, obj, camera):
+    render = scene.render
+    resX = render.resolution_x
+    resY = render.resolution_y
+
+    verts = (vert.co for vert in obj.data.vertices)
+    cords2d = [world_to_camera_view(scene, camera, coord) for coord in verts]
+
+    xmax = round(cords2d[0][0] * resX)
+    xmin = round(cords2d[0][0] * resX)
+    ymax = round(cords2d[0][1] * resY)
+    ymin = round(cords2d[0][1] * resY)
+
+    for x, y, d in cords2d:
+        if(xmax<x):
+            xmax = x
+        if(xmin>x):
+            xmin = x
+        if(ymax<y):
+            ymax = y
+        if(ymin>y):
+            ymin = y
+
+
+    return round(xmax), round(xmin), round(ymin), round(ymax)
