@@ -50,6 +50,7 @@ def prepareScene(resX, resY):
     scene.camera = bpy.context.object
     scene.render.resolution_x = resX
     scene.render.resolution_y = resY
+    scene.render.resolution_percentage = 100
     #create light
     lamp = updateLamp(None, scene, camera)
 
@@ -92,7 +93,7 @@ def updateLamp(lamp, scene, img):
     return lamp
 
 # TODO: multiple objects
-def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, label):
+def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, Objectlabel):
     root = etree.Element("annotation")
 
     folder = etree.SubElement(root, "folder")
@@ -115,11 +116,11 @@ def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, lab
     segmented = etree.SubElement(root, "segmented")
     segmented.text = "0"
 
-    xmaxV, xminV, yminV, ymaxV = getObjCords(scene, object, camera)
+    xmaxV, xminV, yminV, ymaxV = getObjCords(scene, object, camera, resX, resY)
 
     obj = etree.SubElement(root, "object")
     label = etree.SubElement(obj, "name")
-    label.text = str(label)
+    label.text = Objectlabel
     pose = etree.SubElement(obj, "pose")
     pose.text = "Unspecified"
     truncated = etree.SubElement(obj, "truncated")
@@ -136,32 +137,42 @@ def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, lab
     ymax = etree.SubElement(bndBox, "ymax")
     ymax.text = str(ymaxV)
     file = open(pathToResults + '\\' + img + '.xml', 'w')
-    file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n","")[2:])
+    file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n","")[2:-1])
     file.close()
 
 # TODO: Research of something to be done with the distance parameter?
-def getObjCords(scene, obj, camera):
-    render = scene.render
-    resX = render.resolution_x
-    resY = render.resolution_y
+def getObjCords(scene, obj, camera, resX, resY):
+    mw = obj.matrix_world
 
-    verts = (vert.co for vert in obj.data.vertices)
+    verts = (mw * vert.co for vert in obj.data.vertices)
     cords2d = [world_to_camera_view(scene, camera, coord) for coord in verts]
 
-    xmax = round(cords2d[0][0] * resX)
-    xmin = round(cords2d[0][0] * resX)
-    ymax = round(cords2d[0][1] * resY)
-    ymin = round(cords2d[0][1] * resY)
+    xmax = round(cords2d[0][0]*resX)
+    xmin = round(cords2d[0][0]*resX)
+    ymax = round(cords2d[0][1]*resY)
+    ymin = round(cords2d[0][1]*resY)
 
     for x, y, d in cords2d:
-        if(xmax<x):
-            xmax = x
-        if(xmin>x):
-            xmin = x
-        if(ymax<y):
-            ymax = y
-        if(ymin>y):
-            ymin = y
+        if(xmax<x*resX):
+            xmax = round(x * resX)
+        if(xmin>x*resX):
+            xmin = round(x * resX)
+        if(ymax<y*resY):
+            ymax = round(y * resY)
+        if(ymin>y*resY):
+            ymin = round(y * resY)
 
+    if(xmin<0):
+        xmin = 0
+    if(ymin<0):
+        ymin = 0
 
-    return round(xmax), round(xmin), round(ymin), round(ymax)
+    if(xmax>resX):
+        xmax = resX
+    if(ymax>resY):
+        ymax = resY
+
+    ymax = resY - ymax
+    ymin = resY - ymin
+
+    return xmax, xmin, ymin, ymax
