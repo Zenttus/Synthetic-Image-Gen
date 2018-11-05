@@ -1,11 +1,20 @@
 import bpy
 import os
+import sys
 import toolbox
 
-pathToBackgroundImages = 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages'
-pathToObject = 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\tenbal.3DS'
-pathToResults = 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results'
-numOfPics = 5
+if(len(sys.argv)<8):
+    print("Missing arguments")
+    sys.exit()
+
+# TODO: add default values
+pathToBackgroundImages = sys.argv[4]
+# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages'
+pathToObject = sys.argv[5]
+# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\tenbal.3DS'
+pathToResults = sys.argv[6]
+# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results'
+numOfPics = int(sys.argv[7])
 resX = 640
 resY = 480
 label = 'tennisBall'
@@ -28,6 +37,3 @@ for imgName in jpgList:
         bpy.ops.render.render( write_still=True )
 
         toolbox.generateLabelFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
-
-#o.select = True
-#bpy.ops.object.delete(use_global=False)

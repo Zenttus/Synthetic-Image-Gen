@@ -21,9 +21,6 @@ def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath):
     zPos = random.uniform(0,zrange)
     yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
     xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
-    print(zPos)
-    print(yPos)
-    print(xPos)
 
     if(object==None):
         bpy.ops.import_scene.autodesk_3ds(filepath=filePath, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl",)
@@ -32,6 +29,7 @@ def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath):
         object.scale = (.001, .001, .001)
 
     object.location = (xPos, yPos, zPos)
+    object.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
     return object
 
 def deselectAll():
