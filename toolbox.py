@@ -8,22 +8,21 @@ from lxml import etree
 # TODO: Oganize order
 # TODO: Make parameters name better
 # TODO: Different label modes for different algorithms
-# TODO: make rotation optional
 
 # TODO: Incorporate scale and origin, different types of file, random rotation
-def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath, rotation=True):
+def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath, rotation=1):
     zPos = random.uniform(0,zrange)
     yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
     xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
 
     if(object==None):
-        bpy.ops.import_scene.autodesk_3ds(filepath=filePath, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl",)
+         bpy.ops.import_scene.autodesk_3ds(filepath=filePath, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl",)
         deselectAll()
-        object = bpy.data.objects['Box001']
+        object = bpy.data.objects['Box001'] #TODO fix this
         object.scale = (.001, .001, .001)
 
     object.location = (xPos, yPos, zPos)
-    if(rotation):
+    if(rotation==1):
         object.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
     return object
 
