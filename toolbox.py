@@ -7,17 +7,11 @@ from lxml import etree
 # TODO: Documentation
 # TODO: Oganize order
 # TODO: Make parameters name better
-# TODO: Different label modes for different outputs
-# TODO: verify resolution
+# TODO: Different label modes for different algorithms
+# TODO: make rotation optional
 
 # TODO: Incorporate scale and origin, different types of file, random rotation
-def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath):
-    '''Descrip
-    Parameters
-    ----------
-    object : type
-        descrip
-    '''
+def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath, rotation=True):
     zPos = random.uniform(0,zrange)
     yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
     xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
@@ -29,7 +23,8 @@ def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath):
         object.scale = (.001, .001, .001)
 
     object.location = (xPos, yPos, zPos)
-    object.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
+    if(rotation):
+        object.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
     return object
 
 def deselectAll():

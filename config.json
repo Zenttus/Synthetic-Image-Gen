@@ -1,0 +1,16 @@
+{
+  "SETTINGS" : {
+    "BackGroundImagesPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages",
+    "PathToResults" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results",
+    "PicturesPerBackgroudn" : 10,
+    "ResX" : 640,
+    "ResY" : 480
+  },
+  "OBJECTS" : {
+    "O1" : {
+      "ObjectModelPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\tenbal.3DS",
+      "Label" : "tennisBall",
+      "Rotate" : 1
+    }
+  }
+}

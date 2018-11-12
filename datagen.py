@@ -2,38 +2,33 @@ import bpy
 import os
 import sys
 import toolbox
+import json
 
-if(len(sys.argv)<8):
-    print("Missing arguments")
-    sys.exit()
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
-# TODO: add default values
-pathToBackgroundImages = sys.argv[4]
-# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages'
-pathToObject = sys.argv[5]
-# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\tenbal.3DS'
-pathToResults = sys.argv[6]
-# 'C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results'
-numOfPics = int(sys.argv[7])
-resX = 640
-resY = 480
-label = 'tennisBall'
+pathToBackgroundImages = config['SETTINGS']['BackGroundImagesPath']
+pathToObject = config['OBJECTS']['O1']['ObjectModelPath']
+pathToResults = config['SETTINGS']['PathToResults']
+numOfPics = config['SETTINGS']['PicturesPerBackgroudn']
+resX = config['SETTINGS']['ResX']
+resY = config['SETTINGS']['ResY']
+label = config['OBJECTS']['O1']['Label']
 
 #Prepare enviorment
 scene, camera, lamp = toolbox.prepareScene(resX, resY)
 jpgList = toolbox.loadImages(pathToBackgroundImages)
 
-
 object = None
 currentImg = None
+
 for imgName in jpgList:
     imagePos, currentImg = toolbox.changeImage(camera, imgName, currentImg, pathToBackgroundImages)
     for n in range(numOfPics):
-
         object = toolbox.posObjRnd(object, camera, 1, 1, imagePos, pathToObject)
         lamp = toolbox.updateLamp(lamp, scene, object)
 
-        bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.jpg'
+        bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.png' # TODO find format.
         bpy.ops.render.render( write_still=True )
 
         toolbox.generateLabelFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
