@@ -2,7 +2,7 @@
   "SETTINGS" : {
     "BackGroundImagesPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages",
     "PathToResults" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results",
-    "PicturesPerBackgroudn" : 10,
+    "PicturesPerBackgroudn" : 2,
     "ResX" : 640,
     "ResY" : 480
   },
@@ -13,7 +13,8 @@
       "Rotate" : 1,
       "Scale" : "",
       "Origin" : "",
-      "MaxRepetition" : 2
+      "MaxRepetition" : 2,
+      "Alpha" : 0.2
     }
   }
 }

@@ -11,6 +11,7 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 # TODO clean this mess
+# TODO : Make it for more than one type of object
 pathToBackgroundImages = config['SETTINGS']['BackGroundImagesPath']
 pathToObject = config['OBJECTS']['O1']['ObjectModelPath']
 pathToResults = config['SETTINGS']['PathToResults']
@@ -20,6 +21,7 @@ resY = config['SETTINGS']['ResY']
 label = config['OBJECTS']['O1']['Label']
 rotate = config['OBJECTS']['O1']['Rotate']
 maxNumOfObjects = config['OBJECTS']['O1']['MaxRepetition']
+alp = config['OBJECTS']['O1']['Alpha']
 
 #Prepare enviorment
 scene, camera, lamp = toolbox.prepareScene(resX, resY)
@@ -31,10 +33,9 @@ currentImg = None
 for imgName in jpgList:
     imagePos, currentImg = toolbox.changeImage(camera, imgName, currentImg, pathToBackgroundImages)
     for n in range(numOfPics):
-        object = toolbox.posObjRnd(object, scene, camera, 1, 1, imagePos, pathToObject, rotation=rotate)
+        object = toolbox.posObjRnd(object, scene, camera, 1, 1, imagePos, pathToObject, rotation=rotate, alpha=alp)
         lamp = toolbox.updateLamp(lamp, scene, camera)
 
         bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.png' # TODO find best format.
         bpy.ops.render.render( write_still=True )
-\
         toolbox.generateLabelFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
