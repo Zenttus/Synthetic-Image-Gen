@@ -5,7 +5,6 @@ import toolbox
 import json
 import random
 
-#TODO multiple objects
 #TODO that the conf file has the backgroundImages info
 
 with open('config.json', 'r') as f:
@@ -26,26 +25,16 @@ maxNumOfObjects = config['OBJECTS']['O1']['MaxRepetition']
 scene, camera, lamp = toolbox.prepareScene(resX, resY)
 jpgList = toolbox.loadImages(pathToBackgroundImages)
 
-object = [None]
-
-for n in range(maxNumOfObjects-1):
-    object.append(None)
-
+object = [None] * maxNumOfObjects
 currentImg = None
 
 for imgName in jpgList:
     imagePos, currentImg = toolbox.changeImage(camera, imgName, currentImg, pathToBackgroundImages)
     for n in range(numOfPics):
-        for ob in object:
-            if(5 < random.uniform(0,10) or ob==None): #TODO : add this to conf
-                ob = toolbox.posObjRnd(ob, camera, 1, 1, imagePos, pathToObject, rotate)
-                lamp = toolbox.updateLamp(lamp, scene, ob)
-            else:
-                ob.delete(use_global=False)
-                ob = None
+        object = toolbox.posObjRnd(object, scene, camera, 1, 1, imagePos, pathToObject, rotation=rotate)
+        lamp = toolbox.updateLamp(lamp, scene, camera)
 
-        bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.png' # TODO find format.
+        bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.png' # TODO find best format.
         bpy.ops.render.render( write_still=True )
-
-        #TODO fix this
-        #toolbox.generateLabelFile(ob, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
+\
+        toolbox.generateLabelFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)

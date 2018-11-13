@@ -10,21 +10,49 @@ from lxml import etree
 # TODO: Different label modes for different algorithms
 
 # TODO: Incorporate scale and origin, different types of file, random rotation
-def posObjRnd(object, camera, zrange, relativeSize, imageX, filePath, rotation=1):
-    zPos = random.uniform(0,zrange)
-    yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
-    xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
+def posObjRnd(object, scene, camera, zrange, relativeSize, imageX, filePath, alpha=0.5, rotation=1):
 
-    if(object==None):
-         bpy.ops.import_scene.autodesk_3ds(filepath=filePath, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl",)
+    if(object[0]==None):
+        bpy.ops.import_scene.autodesk_3ds(filepath=filePath, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl")
         deselectAll()
-        object = bpy.data.objects['Box001'] #TODO fix this
-        object.scale = (.001, .001, .001)
-
-    object.location = (xPos, yPos, zPos)
-    if(rotation==1):
-        object.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
+        object[0] = bpy.data.objects['Box001']
+        object[0].scale = (.001, .001, .001)
+        for o in range(len(object)):
+            object[o] = object[0].copy()
+            object[o].data = object[0].data.copy()
+            scene.objects.link(object[o])
+            zPos = random.uniform(0,zrange)
+            yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
+            xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
+            object[o].location = (xPos, yPos, zPos)
+            if(rotation==1):
+                object[o].rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
+        makeInvisible(bpy.data.objects['Box001'])
+    else:
+        for o in object:
+            if(random.uniform(0,1)<alpha):
+                makeInvisible(o)
+                o.hide = True
+            else:
+                o.hide = False
+                zPos = random.uniform(0,zrange)
+                yPos = random.uniform((-1)*((camera.location[2]-zPos)/camera.location[2])/2,((camera.location[2]-zPos)/camera.location[2])/2)
+                xPos = random.uniform(imageX*((camera.location[2]-zPos)/camera.location[2]),abs(imageX)*((camera.location[2]-zPos)/camera.location[2]))
+                o.location = (xPos, yPos, zPos)
+                if(rotation==1):
+                    o.rotation_euler = (random.uniform(0,3.14),random.uniform(0,3.14),random.uniform(0,3.14))
     return object
+
+def makeInvisible(ob):
+    ob.location = (0,0,-20) # TODO : This is not the best way, fix this(imagine an object that is that big)
+
+
+def copyObjects(arrayOfObjects, obj, scene):
+    arrayOfObjects[0] = obj
+    for n in range(1, len(arrayOfObjects)):
+        arrayOfObjects[n] = arrayOfObjects[0].copy()
+        arrayOfObjects[n] = arrayOfObjects[0].data.copy()
+        scene.objects.link(arrayOfObjects[n])
 
 def deselectAll():
     for obj in bpy.data.objects:
@@ -82,9 +110,15 @@ def updateLamp(lamp, scene, img):
     lamp.location = (xPos, yPos, zPos)
     lamp.select = True
     scene.objects.active = lamp
+
+    #Randomize Color 
+    r = random.uniform(.5,1)
+    g = random.uniform(.5,1)
+    b = random.uniform(.5,1)
+    lamp.data.color = [r, g, b]
+
     return lamp
 
-# TODO: multiple objects
 def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, Objectlabel):
     root = etree.Element("annotation")
 
@@ -108,26 +142,30 @@ def generateLabelFile(object, scene, camera, pathToResults, img, resX, resY, Obj
     segmented = etree.SubElement(root, "segmented")
     segmented.text = "0"
 
-    xmaxV, xminV, yminV, ymaxV = getObjCords(scene, object, camera, resX, resY)
+    for o in object:
+        if(o.hide == True):
+            continue
+        xmaxV, xminV, yminV, ymaxV = getObjCords(scene, o, camera, resX, resY)
 
-    obj = etree.SubElement(root, "object")
-    label = etree.SubElement(obj, "name")
-    label.text = Objectlabel
-    pose = etree.SubElement(obj, "pose")
-    pose.text = "Unspecified"
-    truncated = etree.SubElement(obj, "truncated")
-    truncated.text = "0"
-    difficult = etree.SubElement(obj, "difficult")
-    difficult.text = "0"
-    bndBox = etree.SubElement(obj, "bndbox")
-    xmin = etree.SubElement(bndBox, "xmin")
-    xmin.text = str(xminV)
-    ymin = etree.SubElement(bndBox, "ymin")
-    ymin.text = str(yminV)
-    xmax = etree.SubElement(bndBox, "xmax")
-    xmax.text = str(xmaxV)
-    ymax = etree.SubElement(bndBox, "ymax")
-    ymax.text = str(ymaxV)
+        obj = etree.SubElement(root, "object")
+        label = etree.SubElement(obj, "name")
+        label.text = Objectlabel
+        pose = etree.SubElement(obj, "pose")
+        pose.text = "Unspecified"
+        truncated = etree.SubElement(obj, "truncated")
+        truncated.text = "0"
+        difficult = etree.SubElement(obj, "difficult")
+        difficult.text = "0"
+        bndBox = etree.SubElement(obj, "bndbox")
+        xmin = etree.SubElement(bndBox, "xmin")
+        xmin.text = str(xminV)
+        ymin = etree.SubElement(bndBox, "ymin")
+        ymin.text = str(yminV)
+        xmax = etree.SubElement(bndBox, "xmax")
+        xmax.text = str(xmaxV)
+        ymax = etree.SubElement(bndBox, "ymax")
+        ymax.text = str(ymaxV)
+
     file = open(pathToResults + '\\' + img + '.xml', 'w')
     file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n","")[2:-1])
     file.close()
