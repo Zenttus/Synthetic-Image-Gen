@@ -2,9 +2,11 @@
   "SETTINGS" : {
     "BackGroundImagesPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages",
     "PathToResults" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results",
-    "PicturesPerBackgroudn" : 2,
+    "PicturesPerBackgroudn" : 1,
     "ResX" : 640,
-    "ResY" : 480
+    "ResY" : 480,
+    "LabelType" : "xml",
+    "GPU" : 1
   },
   "OBJECTS" : {
     "O1" : {
