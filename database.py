@@ -11,47 +11,44 @@ mycursor = mydb.cursor()  #Object that communicates with the entire MySQL server
 
 #mycursor.exucute("CREATE DATABASE testdb") --> Method that created the database
 
-#mycursor.execute("CREATE TABLE ImagesTable (id VARCHAR(255), imagePath VARCHAR(255), Category VARCHAR(255))") #--> Created the table
+# mycursor.execute("CREATE TABLE ImagesTable (id INT AUTO_INCREMENT PRIMARY KEY, imagePath VARCHAR(255), Category VARCHAR(255))") #--> Created the table
 
 
 # Function to add single image to db
-def addImage(ID, imagePath, category):
-    sqlFormula = "INSERT INTO ImagesTable (id, imagePath, Category) VALUES (%s, %s, %s)"
-    image = (ID, imagePath, category)
+def addImage(imagePath, category):
+    sqlFormula = "INSERT INTO ImagesTable (imagePath, Category) VALUES (%s, %s)"
+    image = (imagePath, category)
     mycursor.execute(sqlFormula, image)
     mydb.commit()
+    print(mycursor.rowcount, "record inserted.")
+
+#Create images
+# imagesArray = [("C:\home\GenImages\img1.jpg", "tennisball"),
+#               ("C:\home\GenImages\img2.jpg", "baseballball"),
+#               ("C:\home\GenImages\img3.jpg", "soccerball"),
+#               ("C:\home\GenImages\img4.jpg", "volleyballball"),
+#               ("C:\home\GenImages\img5.jpg", "golfball")]
+
 
 # Function that takes an array of images and add them all to the db
 def addImages(imagesArray):
-    sqlFormula = "INSERT INTO ImagesTable (id, imagePath, Category) VALUES (%s, %s, %s)"
+    sqlFormula = "INSERT INTO ImagesTable (imagePath, Category) VALUES (%s, %s)"
     mycursor.executemany(sqlFormula, imagesArray)
     mydb.commit()
+    print(mycursor.rowcount, "was inserted.")
 
 
-# Block that search for a specific category
-sql = "SELECT * FROM ImagesTable WHERE Category = 'Category3'"
-mycursor.execute(sql)
-result = mycursor.fetchall()
-for r in result:
-    print(r)
+
+# Search for a specific category
+# sql = "SELECT * FROM ImagesTable WHERE Category = 'write category here'"
+# mycursor.execute(sql)
+# result = mycursor.fetchall()
+# for r in result:
+#     print(r)
+
+#Delete from table
+# sql = "DELETE FROM ImagesTable WHERE ID = 6"
+# mycursor.execute(sql)
+# mydb.commit()
 
 
-#Create images
-#imagesArray = [("imageID1", "String1", "String2"),
- #              ("imageID2", "String1", "String2"),
-  #             ("imageID3", "String1", "String2"),
-   #            ("imageID4", "String1", "String2"),
-    #           ("imageID5", "String1", "String2")]
-
-#TODO Crear funcion para iniciar base de datos, a~adir elementos a la lista y conseguir elementos de acuerdo a la categoria
-
-#mycursor.executemany(sqlFormula, imagesArray)    #Store the image in table
-
-#mycursor.execute("SELECT id FROM images")
-
-#myresult = mycursor.fetchall()
-
-#for row in myresult:
-#    print(row)
-
-#mydb.commit()  #Make the change to the table to be seen in the database
