@@ -15,7 +15,7 @@ import toolbox
 #TODO Write README
 #TODO Make object a class
 
-tick = time.time()
+tick = time.time() # Time measure
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -53,8 +53,8 @@ for imgName in jpgList:
 
         bpy.data.scenes['Scene'].render.filepath = pathToResults + '\\' + str(imgName[:-4]) + str(n) + '.jpg' # TODO find best format.
         bpy.ops.render.render( write_still=True )
-        toolbox.generateLabelTextFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
-        #toolbox.generateLabelFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
+        #toolbox.generateLabelTextFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
+        toolbox.generateLabelXmlFile(object, scene, camera, pathToResults, str(imgName[:-4]) + str(n), resX, resY, label)
 
 tock = time.time()
 print("Pictures Printed: " + str(len(jpgList)*numOfPics) + "\nResolution: " + str(resX) + " x " + str(resY) + "\nTime: " + str(tock-tick))
