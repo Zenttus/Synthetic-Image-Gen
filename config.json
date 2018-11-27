@@ -1,8 +1,8 @@
 {
   "SETTINGS" : {
-    "BackGroundImagesPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\backgroundImages",
-    "PathToResults" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\results",
-    "PicturesPerBackgroudn" : 3,
+    "BackGroundImagesPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\demo\\backgroundImages",
+    "PathToResults" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\demo\\results",
+    "PicturesPerBackgroudn" : 1,
     "ResX" : 640,
     "ResY" : 480,
     "LabelType" : "xml",
@@ -10,7 +10,7 @@
   },
   "OBJECTS" : {
     "O1" : {
-      "ObjectModelPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\tenbal.3DS",
+      "ObjectModelPath" : "C:\\Users\\Owrn\\Documents\\gitRepos\\synthetic-data-gen-hub\\demo\\tenbal.3DS",
       "Label" : "tennisBall",
       "Rotate" : 1,
       "Scale" : "",
