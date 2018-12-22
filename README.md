@@ -1,5 +1,5 @@
-# Synthetic Data Gen
- Synthetic Data Gen(SDG) is a group of python scripts that uses Blender to generate images. With the goal to generate images of objects that there's no enough data available to train vision models. The code has implemented anti biasing techniques like random positioning and different light conditions.
+# Synthetic Image Gen
+ Synthetic Image Gen(SIG) is a group of python scripts that uses Blender to generate images and corresponding labels. With the goal to generate images of objects that there's no enough data available to train vision models. The code has implemented anti biasing techniques like random positioning and different light conditions.
  This project is still on its initial stages, a lot of work is still to be done and there's a lot of room to improvement.
 
 # Setting Up
@@ -8,7 +8,9 @@
     1. lxml
  3. Download Repo
 # Running Demo
-* "C:\Program Files\Blender Foundation\Blender\blender.exe" --background --python datagen.py
+  ''' 
+ C:\Program Files\Blender Foundation\Blender\blender.exe" --background --python datagen.pyn
+  '''
 # How to see results
 Tool for looking at pics and labels. (https://github.com/tzutalin/labelImg)
 # Custom data?
