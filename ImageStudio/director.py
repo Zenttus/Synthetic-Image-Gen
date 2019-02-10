@@ -76,6 +76,7 @@ class Director:
                     else:
                         actor.pose(self.current_panel, 1, self.camera)
                         actors_in_set += 1
+                        actor.hiden = False
 
     def action(self):
         for panel in self.panels_conf:

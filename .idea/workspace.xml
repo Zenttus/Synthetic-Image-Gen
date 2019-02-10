@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1887ccf4-c291-49a7-8287-e2951eb36f6c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ImageStudio/actor.py" beforeDir="false" afterPath="$PROJECT_DIR$/ImageStudio/actor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ImageStudio/configuration.py" beforeDir="false" afterPath="$PROJECT_DIR$/ImageStudio/configuration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImageStudio/director.py" beforeDir="false" afterPath="$PROJECT_DIR$/ImageStudio/director.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ImageStudio/scenario.py" beforeDir="false" afterPath="$PROJECT_DIR$/ImageStudio/panel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,13 +62,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ImageStudio/director.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="76" column="55" lean-forward="true" selection-start-line="76" selection-start-column="55" selection-end-line="77" selection-end-column="42" />
+            <state relative-caret-position="-1020">
+              <caret line="78" column="35" selection-start-line="78" selection-start-column="35" selection-end-line="78" selection-end-column="35" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#276#812#0" />
                 <element signature="e#850#1871#0" />
-                <element signature="e#2816#3291#0" />
               </folding>
             </state>
           </provider>
@@ -335,13 +328,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ImageStudio/director.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="76" column="55" lean-forward="true" selection-start-line="76" selection-start-column="55" selection-end-line="77" selection-end-column="42" />
+        <state relative-caret-position="-1020">
+          <caret line="78" column="35" selection-start-line="78" selection-start-column="35" selection-end-line="78" selection-end-column="35" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#276#812#0" />
             <element signature="e#850#1871#0" />
-            <element signature="e#2816#3291#0" />
           </folding>
         </state>
       </provider>
