@@ -4,7 +4,7 @@ import bpy
 # TODO implement masks
 
 
-class Scenario:
+class Panel:
 
     def __init__(self, img_path, conf):
         for obj in bpy.data.objects:

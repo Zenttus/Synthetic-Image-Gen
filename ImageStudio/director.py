@@ -1,11 +1,12 @@
 import json
 import random
-from ImageStudio.scenario import Scenario
+from ImageStudio.panel import Panel
 from ImageStudio.actor import Actor
 from lxml import etree
 from bpy_extras.object_utils import world_to_camera_view
 import os
 import bpy
+
 
 class Director:
 
@@ -16,24 +17,28 @@ class Director:
 
         # Loading settings
         self.settings = config['SETTINGS']
-        self.backgrounds = config["BACKGROUNDS"]
-        self.actors_conf = config["OBJECTS"]
+        self.panels_conf = config["PANELS"]
+        self.actors_conf = config["ACTORS"]
 
+        # Loading scene
         self.scene, self.camera = prepare_scene(self.settings['ResX'], self.settings['ResY'])
-        self.current_scene = None
+        self.current_panel = None
         self.light = None
         self.actors = {}
-        self.scene.cycles.device = 'GPU'  # Comment this if not using GPU # TODO implement this properly
+
+        self.scene.cycles.device = 'GPU'  # TODO implement this properly (Check if GPU is available first)
 
     def update_light(self):
+        # Create light
         if self.light is None:
             lamp_data = bpy.data.lamps.new(name="New Lamp", type='POINT')
             self.light = bpy.data.objects.new(name="New Lamp", object_data=lamp_data)
             self.scene.objects.link(self.light)
 
-        x_pos = random.uniform(self.current_scene.img.location[0] - 2, self.current_scene.img.location[0] + 2)
-        y_pos = random.uniform(self.current_scene.img.location[1] - 2, self.current_scene.img.location[1] + 2)
-        z_pos = random.uniform(self.current_scene.img.location[2] + 1, self.current_scene.img.location[2] + 2)
+        # TODO use conf file parameters to position light
+        x_pos = random.uniform(self.current_panel.img.location[0] - 2, self.current_panel.img.location[0] + 2)
+        y_pos = random.uniform(self.current_panel.img.location[1] - 2, self.current_panel.img.location[1] + 2)
+        z_pos = random.uniform(self.current_panel.img.location[2] + 1, self.current_panel.img.location[2] + 2)
         self.light.location = (x_pos, y_pos, z_pos)
         self.light.select = True
         self.scene.objects.active = self.light
@@ -45,34 +50,52 @@ class Director:
         b = random.uniform(.8, 1)
         self.light.data.color = [r, g, b]
 
-    def generate_pic(self, n):
-        path_to_results = self.settings['PathToResults']
-        bpy.data.scenes['Scene'].render.filepath = path_to_results + '\\' + os.path.basename(self.current_scene.conf['path'])[:-4] + str(
-            n) + '.jpg'
-        bpy.ops.render.render(write_still=True)
-        self.generate_label_xml_file(path_to_results, str(self.current_scene.conf['path'][:-4]) + str(n),
-                                self.settings['ResX'], self.settings['ResY'])
-
     def update_actors(self):
-        # Taking out of scene all actors
-        for type in self.actors:  #TODO  THis is a mess, bad code
-            for actor in type:
+        # Taking out the actors from the scene
+        for type in self.actors:
+            for actor in self.actors[type]:
                 if not actor.hiden:
                     actor.hide()
+
         # Adding actors to scene
-        labels = self.current_scene.conf['objects']
-        max_number_of_actors = int(self.current_scene.conf['maxObjects'])
+        labels = self.current_panel.conf['objects']
+        max_number_of_actors = int(self.current_panel.conf['maxObjects'])
         for label in labels:
             if label not in self.actors:
                 self.actors[label] = []
                 for n in range(max_number_of_actors):
                     self.actors[label].append(Actor(self.actors_conf[label]['id'], self.actors_conf[label]['path'], label, self.actors_conf[label]['size']))
+
         # Positioning actors
+        actors_in_set = 0
         for type in self.actors:
-            print(type)
             if type in labels:
                 for actor in self.actors[type]:
-                    actor.pose(self.current_scene, 1, self.camera)
+                    if random.random() > 0.5 or actors_in_set > max_number_of_actors:  # TODO make this random more random
+                        actor.hide()
+                    else:
+                        actor.pose(self.current_panel, 1, self.camera)
+                        actors_in_set += 1
+
+    def action(self):
+        for panel in self.panels_conf:
+            if self.current_panel is None:
+                self.current_panel = Panel(panel['path'], panel)
+            else:
+                self.current_panel.change_background(panel['path'], panel)
+            for take in range(self.settings['imagesPerBackground']):
+                self.current_panel.update_camera(self.camera)
+                self.update_light()
+                self.update_actors()
+                self.generate_pic(take)
+
+    def generate_pic(self, n):
+        path_to_results = self.settings['PathToResults']
+        bpy.data.scenes['Scene'].render.filepath = path_to_results + '\\' + os.path.basename(self.current_panel.conf['path'])[:-4] + str(
+            n) + '.jpg'
+        bpy.ops.render.render(write_still=True)
+        self.generate_label_xml_file(path_to_results, os.path.basename(self.current_panel.conf['path'])[:-4] + str(n),
+                                self.settings['ResX'], self.settings['ResY'])  # TODO: Implement diferent label modes.
 
     def generate_label_xml_file(self, pathToResults, img, resX, resY):
         '''
@@ -101,7 +124,7 @@ class Director:
         segmented.text = "0"
 
         for type in self.actors:
-            for actor in type:
+            for actor in self.actors[type]:
                 if actor.hiden:
                     continue
                 xmaxV, xminV, yminV, ymaxV = get_obj_cords(self.scene, actor.model, self.camera, resX, resY)
@@ -129,27 +152,8 @@ class Director:
         file.write(str(etree.tostring(root, pretty_print=True)).replace("\\n", "")[2:-1])
         file.close()
 
-    def action(self):
-        for background in self.backgrounds:
-            if self.current_scene is None:
-                self.current_scene = Scenario(background['path'], background)
-            else:
-                self.current_scene.change_background(background['path'])
-            for take in range(self.settings['imagesPerBackground']):
-                print('***********************************************************')
-                self.current_scene.update_camera(self.camera)
-                self.update_light()
-                self.update_actors()
-                for a in self.actors:
-                    print(a)
-                #self.generate_pic(take)
-
-
 
 def prepare_scene(res_x, res_y):
-    '''
-    Initiacion of scene(creates camera)
-    '''
     # Clear all
     for obj in bpy.context.scene.objects:
         obj.select = True
@@ -191,10 +195,6 @@ def generate_label_text_file(object, scene, camera, pathToResults, img, resX, re
 
 # TODO: Implement mode to save object distance
 def get_obj_cords(scene, obj, camera, res_x, res_y):
-    """
-    Returns the coordinates that encloses an object in image.
-    """
-
     # Get vertices
     mw = obj.matrix_world
     verts = (mw * vert.co for vert in obj.data.vertices)

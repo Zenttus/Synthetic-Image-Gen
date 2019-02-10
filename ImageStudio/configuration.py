@@ -19,24 +19,24 @@ class Configuration:
         self.conf['SETTINGS']['LabelType'] = label
         self.conf['SETTINGS']["imagesPerBackground"] = images_per_background
 
-    def add_object(self, path, label, size=[1.0, 1.0, 1.0]):
-        if "OBJECTS" not in self.conf:
-            self.conf["OBJECTS"] = {}
+    def add_actor(self, path, label, size=[1.0, 1.0, 1.0]):
+        if "ACTORS" not in self.conf:
+            self.conf["ACTORS"] = {}
 
         obj = dict()
-        obj["id"] = len(self.conf["OBJECTS"])
+        obj["id"] = len(self.conf["ACTORS"])
         obj["path"] = path
         obj["label"] = label
         obj["size"] = size
 
-        self.conf["OBJECTS"][label] = obj
+        self.conf["ACTORS"][label] = obj
 
-    def add_background(self, path, objects, image_size, size_ranges, rotation_ranges, max_objects, lamp_position_range, lamp_color):
-        if "BACKGROUNDS" not in self.conf:
-            self.conf["BACKGROUNDS"] = []
+    def add_panel(self, path, objects, image_size, size_ranges, rotation_ranges, max_objects, lamp_position_range, lamp_color):
+        if "PANELS" not in self.conf:
+            self.conf["PANELS"] = []
 
         background = dict()
-        background["id"] = len(self.conf["BACKGROUNDS"])
+        background["id"] = len(self.conf["PANELS"])
         background["path"] = path
         background["objects"] = objects
         background["size"] = image_size
@@ -47,7 +47,7 @@ class Configuration:
         background["lampColor"] = lamp_color
         # TODO camera zoom
 
-        self.conf["BACKGROUNDS"].append(background)
+        self.conf["PANELS"].append(background)
 
     # TODO def add_mask()
 
@@ -56,7 +56,7 @@ class Configuration:
             self.conf["BACKGROUNDS"] = []
 
         for file in glob.glob(path):  # TODO multiple images types
-            self.add_background(file, objects, image_size, size_ranges, rotation_ranges, max_objects, lamp_position_range, lamp_color)
+            self.add_panel(file, objects, image_size, size_ranges, rotation_ranges, max_objects, lamp_position_range, lamp_color)
 
     def save_conf_to_file(self, path='config.json'):
         json_string = json.dumps(self.conf)

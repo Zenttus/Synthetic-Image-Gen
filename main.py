@@ -6,6 +6,7 @@
 # TODO Test textures on object
 # TODO FUTURE implemente reflections
 # TODO test on other OSs
+# TODO change to "panel"?
 
 from ImageStudio.configuration import Configuration
 from ImageStudio.director import Director
@@ -18,13 +19,15 @@ import bpy
 
 conf = Configuration()
 conf.add_settings('C:\\Users\\Owrn\\Desktop\\Roboboat images\\backgrounds_sig\\results')
-conf.add_object('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 950410 Red.stl', 'Bred', [0.4572, 0.4572, 1.2446])
-conf.add_object('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 46104 White.stl', 'Bwhite', [0.4572, 0.4572, 1.2446])
-conf.add_object('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 950400 Green.stl', 'Bgreen', [0.4572, 0.4572, 1.2446])
+conf.add_actor('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 950410 Red.obj', 'Bred', [0.4572, 0.4572, 1.2446])
+conf.add_actor('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 46104 White.obj', 'Bwhite', [0.4572, 0.4572, 1.2446])
+conf.add_actor('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\Buoy 950400 Green.obj', 'Bgreen', [0.4572, 0.4572, 1.2446])
 # TODO : A-0 buou
 # TODO : platfrom
 conf.add_backgrounds_from_directory('C:\\Users\\Owrn\\Desktop\\Roboboat images\\backgrounds_sig\\*', ['Bred', 'Bwhite', 'Bgreen'], 2.0, [0.1, 1.0], [10, 10, 10], 10, [[0, 5], [-10, 10], [2, 10]], [1, 1, 1])
+
 conf.save_conf_to_file()
 
+# This is where everything runs
 director = Director()
 director.action()
