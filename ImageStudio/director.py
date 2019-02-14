@@ -70,13 +70,14 @@ class Director:
         actors_in_set = 0
         for type in self.actors:
             if type in labels:
-                for actor in self.actors[type]:
-                    if random.random() > 0.5 or actors_in_set > max_number_of_actors:  # TODO make this random more random
-                        actor.hide()
-                    else:
-                        actor.pose(self.current_panel, 1, self.camera)
-                        actors_in_set += 1
-                        actor.hiden = False
+                if random.random() > 0.5:
+                    for actor in self.actors[type]:
+                        if random.random() > 0.5 or actors_in_set > max_number_of_actors:  # TODO make this random more random
+                            actor.hide()
+                        else:
+                            actor.pose(self.current_panel, 1, self.camera)
+                            actors_in_set += 1
+                            actor.hiden = False
 
     def action(self):
         for panel in self.panels_conf:
