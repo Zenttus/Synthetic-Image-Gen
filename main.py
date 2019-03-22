@@ -30,6 +30,7 @@ conf.add_actor('C:\\Users\\Owrn\\Desktop\\Roboboat images\\models\\pn.obj', 'pol
 
 
 # TODO : platfrom
+# TODO: if model is image, import as plane
 conf.add_backgrounds_from_directory('C:\\Users\\Owrn\\Desktop\\Roboboat images\\backgrounds_sig\\*', ['tsmbred', 'tsmbwhite', 'tsmbgreen', 'polybr', 'polybb', 'polybg', 'polyby', 'polybn'], 2.0, [0.1, 1.0], [10, 10, 10], 10, [[0, 5], [-10, 10], [2, 10]], [1, 1, 1])
 
 conf.save_conf_to_file()

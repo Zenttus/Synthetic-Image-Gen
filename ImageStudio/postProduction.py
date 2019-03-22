@@ -1,5 +1,10 @@
-# TODO data divider
-#import glob, os
+import numpy as np
+from PIL import Image
+from ImageStudio import style
+import os
+import cv2
+import glob, os
+
 # Current directory
 #current_dir = os.path.dirname(os.path.abspath(__file__))
 #print(current_dir)
@@ -21,6 +26,57 @@
 #        file_train.write(current_dir + "/" + title + '.jpg' + "\n")
 #        counter = counter + 1
 
-# TODO: labeler xml
-# TODO: labeler txt
-# TODO: noiser
+# TODO: def aument_data():
+
+def add_noise(image, gauss=True, mean=0, var=0.1, snp=False, svsp=0.5, amount=0.004, poisson=False, speckle=False):
+    row, col, ch = image.shape
+    result = image
+    if poisson:
+        vals = len(np.unique(result))
+        vals = 2 ** np.ceil(np.log2(vals))
+        result = np.random.poisson(result * vals) / float(vals)
+    if gauss:
+        sigma = var**0.5
+        g = np.random.normal(mean, sigma, (row, col, ch))
+        g = g.reshape(row, col, ch)
+        result += g
+
+    if snp:
+        # Salt
+        num_salt = np.ceil(amount * image.size * svsp)
+        coords = [np.random.randint(0, i-1, int(num_salt))
+                  for i in image.shape]
+        result[coords] = 1
+        # Pepper
+        num_pepper = np.ceil(amount * image.size * (1. - svsp))
+        coords = [np.random.randint(0, i - 1, int(num_pepper))
+                  for i in image.shape]
+        result[coords] = 0
+    if speckle:
+        g = np.random.randn(row, col, ch)
+        g = g.reshape(row, col, ch)
+        result = result + result * g
+    return result
+
+def flip(image, flipver=True, fliphor=False):
+    result = image
+    if fliphor:
+        result = result.transpose(Image.FLIP_LEFT_RIGHT)
+    if flipver:
+        result = result.transpose(Image.FLIP_TOP_BOTTOM)
+    return result
+
+def ditexturize(images, styles):
+    styler = style()
+    for i in images:
+        count = 0
+        for s in styles:
+            styler.change_style(i, s, i+count)
+            count+=1
+            # TODO duplicate yolo file
+
+
+
+# TODO: def data_preparer():
+# TODO: def mulitcrop():
+# TODO: def rotate():
