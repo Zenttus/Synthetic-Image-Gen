@@ -1,17 +1,28 @@
 import bpy
 import random
+import os
+import sys
 
 
 class Actor:
 
     def __init__(self, id, path, label, size):
-        # Loading model
-
-        for obj in bpy.data.objects:  # Deselect all objects
+        # Deselect all objects
+        for obj in bpy.data.objects:
             obj.select = False
-      #  bpy.ops.import_mesh.stl(filepath=path)
-        bpy.ops.import_scene.obj(filepath=path)  # TODO multiple object types
-        self.model = bpy.context.selected_objects[0]  # TODO is this the best way to do it?
+        # Loading model
+        if "stl" in os.path.splitext(path)[1]:
+            bpy.ops.import_mesh.stl(filepath=path)
+        elif "obj" in os.path.splitext(path)[1]:
+            bpy.ops.import_scene.obj(filepath=path)
+        elif "jp" in os.path.splitext(path)[1] or "png" in os.path.splitext(path)[1]: # imports object as plane if its a picture
+            bpy.ops.import_image.to_plane(files=[{"name": os.path.basename(path)}], location=(0, 0, 0),
+                                          directory=os.path.dirname(path), shader='SHADELESS', relative=False)
+        else:
+            print("ERROR: MODEL FILE FOR ACTOR NOT VALID")
+            sys.exit()
+
+        self.model = bpy.context.selected_objects[0]  # TODO is thitis the best way to do it?
         # Hiding model
         print(self.model)
         self.hiden = False
@@ -19,7 +30,7 @@ class Actor:
 
         self.id = id
         self.label = label
-        #TODO Correcting scaling runned here
+        #TODO Correcting scaling
         self.size_x = size[0]
         self.size_y = size[1]
         self.size_z = size[2]
@@ -48,9 +59,9 @@ class Actor:
     def correct_size(self, panel):
             r = random.uniform(panel.conf["objectsSizeRanges"][0], panel.conf["objectsSizeRanges"][1])
             x = panel.img.dimensions[0] * self.size_x / r
-            y = panel.img.dimensions[0] * self.size_y / r  ## OJO: img is plane so it doesnt have y
+            y = panel.img.dimensions[0] * self.size_y / r
             z = panel.img.dimensions[0] * self.size_z / r
-            self.model.scale = (.01, .01, .01) # TODO FIX this is temp
+            self.model.scale = (x, y, z) # TODO FIX this is temp
             print(self.model.scale)
 
     # TODO def clone(self):

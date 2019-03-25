@@ -26,7 +26,7 @@ class Director:
         self.light = None
         self.actors = {}
 
-        self.scene.cycles.device = 'GPU'  # TODO implement this properly (Check if GPU is available first)
+        self.scene.cycles.device = 'GPU'
 
     def update_light(self):
         # Create light
@@ -129,6 +129,7 @@ class Director:
             for actor in self.actors[type]:
                 if actor.hiden:
                     continue
+                print(actor.model)
                 xmaxV, xminV, yminV, ymaxV = get_obj_cords(self.scene, actor.model, self.camera, resX, resY)
 
                 obj = etree.SubElement(root, "object")
@@ -192,10 +193,7 @@ def generate_label_text_file(object, scene, camera, pathToResults, img, resX, re
 
     file.close()
 
-    # TODO def get_objects_coordinates(self):
 
-
-# TODO: Implement mode to save object distance
 def get_obj_cords(scene, obj, camera, res_x, res_y):
     # Get vertices
     mw = obj.matrix_world
@@ -228,7 +226,7 @@ def get_obj_cords(scene, obj, camera, res_x, res_y):
     if ymax > res_y:
         ymax = res_y
 
-    #Convert coordinate system #TODO: make this a parameter, to have different coordinates modes.
+    #Convert coordinate system
     ymax = res_y - ymax
     ymin = res_y - ymin
 

@@ -8,7 +8,7 @@ class Configuration:
         if path is None:
             self.conf = dict()
         else:
-            with open(path) as f: # TODO : catch exceptions
+            with open(path) as f:
                 self.conf = json.load(f)
 
     def add_settings(self, path_to_results="./results", res_x=640, res_y=480, label="xml", images_per_background=5):
@@ -45,7 +45,6 @@ class Configuration:
         background["maxObjects"] = max_objects
         background["lampPositionRange"] = lamp_position_range
         background["lampColor"] = lamp_color
-        # TODO camera zoom
 
         self.conf["PANELS"].append(background)
 

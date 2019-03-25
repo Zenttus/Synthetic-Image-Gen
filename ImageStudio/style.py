@@ -12,7 +12,7 @@ from keras.applications import vgg19
 from keras import backend as K
 
 class Styler():
-    def __init__(self, iter=10, tv_w=1.0, c_w=1.0, s_w=0.025):
+    def __init__(self, iter=1, tv_w=1.0, c_w=1.0, s_w=0.025):
         self.iterations=iter
         self.total_variation_weight = tv_w
         self.style_weight = s_w
@@ -84,12 +84,11 @@ class Styler():
         x = preprocess_image(base_img, img_nrows, img_ncols)
 
         for i in range(self.iterations):
-            print("here")
             x, min_val, info = fmin_l_bfgs_b(evaluator.loss, x.flatten(),
                                              fprime=evaluator.grads, maxfun=20)
             print(i)
 
-        save_img(result_path, deprocess_image())
+        #save_img(result_path, deprocess_image(x, img_nrows, img_ncols))
 
         return deprocess_image(x, img_nrows, img_ncols)
 
@@ -194,6 +193,3 @@ class Evaluator(object):
         self.grad_values = None
         return grad_values
 
-
-s = Styler()
-res = s.change_style("a.jpg", "b.jpg")
